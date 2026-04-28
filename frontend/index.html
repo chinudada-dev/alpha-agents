@@ -4,9 +4,318 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agentic AI Stocks</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f4efe4;
+            --panel: rgba(255, 251, 244, 0.9);
+            --ink: #1f2933;
+            --muted: #52606d;
+            --accent: #c8553d;
+            --accent-dark: #8f2d1f;
+            --line: rgba(31, 41, 51, 0.12);
+            --shadow: 0 20px 60px rgba(63, 46, 36, 0.14);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Georgia, "Times New Roman", serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top left, rgba(200, 85, 61, 0.18), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(34, 139, 87, 0.16), transparent 24%),
+                linear-gradient(135deg, #fbf7ef 0%, var(--bg) 100%);
+        }
+
+        .shell {
+            width: min(1080px, calc(100% - 2rem));
+            margin: 0 auto;
+            padding: 2rem 0 3rem;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            align-items: stretch;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(16px);
+        }
+
+        .hero-copy {
+            padding: 2rem;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            background: rgba(200, 85, 61, 0.1);
+            color: var(--accent-dark);
+            font-size: 0.82rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 1rem 0 0.75rem;
+            font-size: clamp(2.6rem, 5vw, 4.8rem);
+            line-height: 0.95;
+        }
+
+        .lead {
+            margin: 0;
+            max-width: 34rem;
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--muted);
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.9rem;
+            margin-top: 1.75rem;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.9rem 1.25rem;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+        }
+
+        .button-primary {
+            color: #fffaf4;
+            background: linear-gradient(135deg, var(--accent) 0%, #dd7d3c 100%);
+            box-shadow: 0 16px 30px rgba(200, 85, 61, 0.22);
+        }
+
+        .button-secondary {
+            color: var(--ink);
+            border-color: var(--line);
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        .status-panel {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .status-panel::after {
+            content: "";
+            position: absolute;
+            inset: auto -20% -30% 30%;
+            height: 220px;
+            background: radial-gradient(circle, rgba(200, 85, 61, 0.22), transparent 60%);
+        }
+
+        .status-label,
+        .meta-label {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 0.82rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .status-pill {
+            width: fit-content;
+            margin-top: 0.75rem;
+            padding: 0.55rem 0.9rem;
+            border-radius: 999px;
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-weight: 700;
+            color: #fffaf4;
+            background: #355c4d;
+        }
+
+        .status-pill.pending {
+            background: #8f6d1f;
+        }
+
+        .status-pill.error {
+            background: var(--accent-dark);
+        }
+
+        .status-value {
+            margin: 1.2rem 0 0;
+            font-size: clamp(2.2rem, 4vw, 3.4rem);
+            line-height: 1;
+        }
+
+        .status-note {
+            position: relative;
+            z-index: 1;
+            margin: 1rem 0 0;
+            max-width: 20rem;
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.7;
+            color: var(--muted);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .mini-card {
+            padding: 1.25rem;
+        }
+
+        .mini-card h2 {
+            margin: 0.8rem 0 0.45rem;
+            font-size: 1.15rem;
+        }
+
+        .mini-card p {
+            margin: 0;
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            color: var(--muted);
+            line-height: 1.65;
+        }
+
+        .footer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding: 1rem 0;
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            color: var(--muted);
+        }
+
+        .mono {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        }
+
+        @media (max-width: 640px) {
+            .shell {
+                width: min(100% - 1rem, 1080px);
+                padding-top: 1rem;
+            }
+
+            .hero-copy,
+            .status-panel,
+            .mini-card {
+                padding: 1.25rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Agentic AI Stocks</h1>
-    <p>Frontend placeholder for the future UI.</p>
+    <main class="shell">
+        <section class="hero">
+            <article class="card hero-copy">
+                <span class="eyebrow">Live RAG Workspace</span>
+                <h1>Agentic AI Stocks</h1>
+                <p class="lead">
+                    A lightweight frontend for your stock research assistant. It surfaces the API status,
+                    the ingestion-to-analysis flow, and gives you a simple landing page you can deploy with the app.
+                </p>
+                <div class="actions">
+                    <a class="button button-primary" href="/health">Check API Health</a>
+                    <a class="button button-secondary" href="https://github.com/" target="_blank" rel="noreferrer">
+                        Connect Repo
+                    </a>
+                </div>
+            </article>
+
+            <aside class="card status-panel">
+                <div>
+                    <div class="status-label">Backend status</div>
+                    <div id="status-pill" class="status-pill pending">Checking</div>
+                    <p id="status-value" class="status-value">...</p>
+                </div>
+                <p id="status-note" class="status-note">
+                    The page calls the FastAPI health endpoint on load so you can verify the deployment is alive.
+                </p>
+            </aside>
+        </section>
+
+        <section class="grid">
+            <article class="card mini-card">
+                <div class="meta-label">01</div>
+                <h2>Ingest News</h2>
+                <p>Feed financial news and company updates into the vector store for retrieval.</p>
+            </article>
+            <article class="card mini-card">
+                <div class="meta-label">02</div>
+                <h2>Retrieve Context</h2>
+                <p>Use embeddings and semantic search to pull the most relevant market context.</p>
+            </article>
+            <article class="card mini-card">
+                <div class="meta-label">03</div>
+                <h2>Generate Insight</h2>
+                <p>Layer agent analysis on top of retrieved information to summarize signals quickly.</p>
+            </article>
+        </section>
+
+        <footer class="footer">
+            <span>Simple frontend served directly by FastAPI.</span>
+            <span class="mono">GET / • GET /health</span>
+        </footer>
+    </main>
+
+    <script>
+        const statusPill = document.getElementById("status-pill");
+        const statusValue = document.getElementById("status-value");
+        const statusNote = document.getElementById("status-note");
+
+        async function loadStatus() {
+            try {
+                const response = await fetch("/health");
+                if (!response.ok) {
+                    throw new Error("Health endpoint returned an error.");
+                }
+
+                const data = await response.json();
+                statusPill.textContent = "Online";
+                statusPill.classList.remove("pending", "error");
+                statusValue.textContent = data.status.toUpperCase();
+                statusNote.textContent = "The deployment is responding normally and the API health check passed.";
+            } catch (error) {
+                statusPill.textContent = "Offline";
+                statusPill.classList.remove("pending");
+                statusPill.classList.add("error");
+                statusValue.textContent = "DOWN";
+                statusNote.textContent = "The page loaded, but the backend health check failed. Verify the FastAPI app is running.";
+            }
+        }
+
+        loadStatus();
+    </script>
 </body>
 </html>
