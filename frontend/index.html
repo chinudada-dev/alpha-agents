@@ -122,64 +122,11 @@
             background: rgba(255, 255, 255, 0.6);
         }
 
-        .status-panel {
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .status-panel::after {
-            content: "";
-            position: absolute;
-            inset: auto -20% -30% 30%;
-            height: 220px;
-            background: radial-gradient(circle, rgba(200, 85, 61, 0.22), transparent 60%);
-        }
-
-        .status-label,
         .meta-label {
             font-family: "Helvetica Neue", Arial, sans-serif;
             font-size: 0.82rem;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: var(--muted);
-        }
-
-        .status-pill {
-            width: fit-content;
-            margin-top: 0.75rem;
-            padding: 0.55rem 0.9rem;
-            border-radius: 999px;
-            font-family: "Helvetica Neue", Arial, sans-serif;
-            font-weight: 700;
-            color: #fffaf4;
-            background: #355c4d;
-        }
-
-        .status-pill.pending {
-            background: #8f6d1f;
-        }
-
-        .status-pill.error {
-            background: var(--accent-dark);
-        }
-
-        .status-value {
-            margin: 1.2rem 0 0;
-            font-size: clamp(2.2rem, 4vw, 3.4rem);
-            line-height: 1;
-        }
-
-        .status-note {
-            position: relative;
-            z-index: 1;
-            margin: 1rem 0 0;
-            max-width: 20rem;
-            font-family: "Helvetica Neue", Arial, sans-serif;
-            line-height: 1.7;
             color: var(--muted);
         }
 
@@ -228,7 +175,6 @@
             }
 
             .hero-copy,
-            .status-panel,
             .mini-card {
                 padding: 1.25rem;
             }
@@ -242,8 +188,8 @@
                 <span class="eyebrow">Live RAG Workspace</span>
                 <h1>Agentic AI Stocks for stock analysis</h1>
                 <p class="lead">
-                    A lightweight wesbite for my stock research assistant. It surfaces the API status,
-                    the ingestion-to-analysis flow, and gives you a simple landing page you can deploy with the app.
+                    A lightweight wesbite for my stock research assistant. It surfaces the ingestion-to-analysis flow
+                    and gives you a simple landing page you can deploy with the app.
                 </p>
                 <div class="actions">
                     <a class="button button-primary" href="/health">Check API Health</a>
@@ -253,16 +199,6 @@
                 </div>
             </article>
 
-            <aside class="card status-panel">
-                <div>
-                    <div class="status-label">Backend status</div>
-                    <div id="status-pill" class="status-pill pending">Checking</div>
-                    <p id="status-value" class="status-value">...</p>
-                </div>
-                <p id="status-note" class="status-note">
-                    The page calls the FastAPI health endpoint on load so you can verify the deployment is alive.
-                </p>
-            </aside>
         </section>
 
         <section class="grid">
@@ -288,34 +224,5 @@
             <span class="mono">GET / • GET /health</span>
         </footer>
     </main>
-
-    <script>
-        const statusPill = document.getElementById("status-pill");
-        const statusValue = document.getElementById("status-value");
-        const statusNote = document.getElementById("status-note");
-
-        async function loadStatus() {
-            try {
-                const response = await fetch("/health");
-                if (!response.ok) {
-                    throw new Error("Health endpoint returned an error.");
-                }
-
-                const data = await response.json();
-                statusPill.textContent = "Online";
-                statusPill.classList.remove("pending", "error");
-                statusValue.textContent = data.status.toUpperCase();
-                statusNote.textContent = "The deployment is responding normally and the API health check passed.";
-            } catch (error) {
-                statusPill.textContent = "Offline";
-                statusPill.classList.remove("pending");
-                statusPill.classList.add("error");
-                statusValue.textContent = "DOWN";
-                statusNote.textContent = "The page loaded, but the backend health check failed. Verify the FastAPI app is running.";
-            }
-        }
-
-        loadStatus();
-    </script>
 </body>
 </html>
